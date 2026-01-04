@@ -2,7 +2,9 @@ import { start } from "@popperjs/core";
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  value: 0,
+  items: localStorage.getItem("cart")
+    ? JSON.parse(localStorage.getItem("cart"))
+    : [],
 };
 
 // Here define a slice
@@ -11,11 +13,20 @@ const addToCart = createSlice({
   initialState,
   reducers: {
     // this is basically a action
-    addItem: (state) => {
-      state.value += 1;
+    addItem: (state, action) => {
+      // console.log(action.payload);
+      state.items.push(action.payload);
+      // localStorage.setItem("key", value);
+      localStorage.setItem("cart", JSON.stringify(state.items));
     },
-    removeItem: (state) => {
-      state.value > 0 ? (state.value -= 1) : 0;
+    removeItem: (state, action) => {
+      // state.value > 0 ? (state.value -= 1) : 0;
+      const cartData = state.items.filter(
+        (item) => item.id != action.payload.id
+      );
+
+      localStorage.setItem("cart", JSON.stringify(cartData));
+      state.items = cartData;
     },
     clearAllItems: (state) => {
       state.value = 0;

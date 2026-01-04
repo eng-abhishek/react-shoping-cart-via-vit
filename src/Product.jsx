@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addItem, removeItem } from "./redux/slice";
 import { useEffect } from "react";
 import { featchProducts } from "./redux/productSlice";
+import Rating from "./Rating";
 
 const Product = () => {
   const dispatch = useDispatch();
@@ -12,59 +13,71 @@ const Product = () => {
     dispatch(featchProducts());
   }, []);
 
-  const selector = useSelector((state) => state.products.items);
+  const productSelector = useSelector((state) => state.products.items);
+  //   const cartSelector = useSelector((state) => state.cart.items);
+  const cartSelector = useSelector((state) => state.cart.items);
 
-  console.log(selector);
+  //   console.log(cartSelector);
+
+  //   console.log(cartSelector);
   return (
     <>
-      <div className="card shadow-sm mb-4 mt-6">
-        <div className="row g-0 align-items-center">
-          {/* RIGHT SIDE - IMAGE */}
-          <div className="col-md-5 text-center">
-            <img
-              src={img1}
-              className="img-fluid rounded-end p-3"
-              alt="Product"
-              style={{ height: "250px", width: "auto" }}
-            />
-          </div>
+      <div className="container">
+        <div className="row">
+          {productSelector.length > 0 &&
+            productSelector.map((item) => (
+              <div className="col-sm-4 pt-2" key={item.id}>
+                <div className="card">
+                  <img src={item.thumbnail} className="card-img-top" alt="11" />
+                  <div className="card-body">
+                    <h5 className="card-title">{item.title}</h5>
+                    <p className="card-text">{item.description}</p>
+                    <strong className="text-danger">Price: {item.price}</strong>
 
-          {/* LEFT SIDE - DETAILS */}
-          <div className="col-md-7">
-            <div className="card-body">
-              <h5 className="card-title">Wireless Headphones</h5>
-              <p className="card-text text-muted">
-                Lorem Ipsum is simply dummy text of the printing and typesetting
-                industry. Lorem Ipsum has been the industry's standard dummy
-                text ever since the 1500s, when an unknown printer took a galley
-                of type and scrambled it to make a type specimen book. It has
-                survived not only five centuries, but also the leap into
-                electronic typesetting, remaining essentially unchanged.
-              </p>
+                    {cartSelector.some(
+                      (cartItem) => cartItem.id === item.id
+                    ) ? (
+                      <button
+                        onClick={() => dispatch(removeItem(item))}
+                        className="btn btn-danger ms-5"
+                      >
+                        Remove From Cart
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => dispatch(addItem(item))}
+                        className="btn btn-primary ms-5"
+                      >
+                        Add To Cart
+                      </button>
+                    )}
 
-              <h4 className="text-success mb-3">₹2,999</h4>
-
-              <button
-                onClick={() => dispatch(addItem(1))}
-                className="btn btn-primary"
-              >
-                <i className="bi bi-cart-plus me-2"></i>
-                Add to Cart
-              </button>
-
-              <button
-                onClick={() => dispatch(removeItem(1))}
-                className="btn btn-warning ms-3"
-              >
-                <i className="bi bi-cart-remove me-2"></i>
-                Remove Item From Cart
-              </button>
-            </div>
-          </div>
+                    {/* {cartSelector.find(
+                      ((cartItem) => cartItem.id === item.id) ? (
+                        <a
+                          href="javaScript:void(0)"
+                          className="btn btn-primary ms-5"
+                        >
+                          Added In Cart
+                        </a>
+                      ) : (
+                        <a
+                          href="javaScript:void(0)"
+                          onClick={() => dispatch(addItem(item))}
+                          className="btn btn-primary ms-5"
+                        >
+                          Add To Cart
+                        </a>
+                      )
+                    )} */}
+                    <Rating rating={item.rating} />
+                  </div>
+                </div>
+              </div>
+            ))}
         </div>
       </div>
     </>
   );
 };
-
 export default Product;

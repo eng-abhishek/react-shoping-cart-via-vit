@@ -3,21 +3,21 @@ import Header from "./Header";
 import Product from "./Product";
 import { useDispatch } from "react-redux";
 import { clearAllItems } from "./redux/slice";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import CartList from "./CartList";
 
 function App() {
   const dispatch = useDispatch();
 
   return (
     <>
-      <Header />
-      <button
-        onClick={() => dispatch(clearAllItems())}
-        className="btn btn-danger ms-3"
-      >
-        <i className="bi bi-cart-remove me-2"></i>
-        Remove All Items From Cart
-      </button>
-      <Product />
+      <BrowserRouter>
+        <Header />
+        <Routes>
+          <Route path="/" element={<Product />}></Route>
+          <Route path="/cart" element={<CartList />}></Route>
+        </Routes>
+      </BrowserRouter>
     </>
   );
 }
